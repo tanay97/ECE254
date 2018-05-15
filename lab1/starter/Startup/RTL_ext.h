@@ -46,11 +46,12 @@ void (*ptask)(); /* Task entry address */
 
 /* ECE254 Comment: added for lab1 */
 extern int rt_tsk_count_get(void);
-#define os_tsk_count_get() _os_tsk_get((U32)rt_tsk_count_get)
-extern int _os_tsk_get (U32 p) __SVC_0;
+#define os_tsk_count_get() _os_tsk_count_get((U32)rt_tsk_count_get) 
+extern int _os_tsk_count_get (U32 p) __SVC_0;
 
 extern OS_RESULT rt_tsk_get (OS_TID task_id, RL_TASK_INFO *p_task_info);
-#define os_tsk_get(task_id, p_task_info) _os_tsk_get((U32)rt_tsk_get, task_id, p_task_info) extern OS_RESULT _os_tsk_get (U32 p, OS_TID task_id, RL_TASK_INFO *p_task_info) __SVC_0;
+#define os_tsk_get(task_id, p_task_info) _os_tsk_get((U32)rt_tsk_get, task_id, p_task_info)
+extern OS_RESULT _os_tsk_get (U32 p, OS_TID task_id, RL_TASK_INFO *p_task_info) __SVC_0;
 
 #ifdef __cplusplus
 }
