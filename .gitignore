@@ -44,3 +44,6 @@ manual/*.toc
 # backup from from editor
 *~
 *.bak
+*.uvgui.*
+*/CM3_LE.BAT
+*svc_table._ia

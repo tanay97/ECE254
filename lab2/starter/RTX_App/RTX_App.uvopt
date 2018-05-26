@@ -131,7 +131,18 @@
           <Name>-T0</Name>
         </SetRegEntry>
       </TargetDriverDllRegistry>
-      <Breakpoint/>
+      <WatchWindow1>
+        <Ww>
+          <count>0</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>\\RTX_APP\src/RTX_Conf_CM.c\os_active_TCB</ItemText>
+        </Ww>
+        <Ww>
+          <count>1</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>(P_TCB)os_active_TCB[1]</ItemText>
+        </Ww>
+      </WatchWindow1>
       <DebugFlag>
         <trace>0</trace>
         <periodic>0</periodic>
@@ -180,7 +191,7 @@
       <Focus>0</Focus>
       <ColumnNumber>0</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>114</TopLine>
+      <TopLine>108</TopLine>
       <CurrentLine>124</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>.\src\startup_LPC17xx.s</PathWithFileName>
@@ -264,7 +275,7 @@
 
   <Group>
     <GroupName>Source Code</GroupName>
-    <tvExp>0</tvExp>
+    <tvExp>1</tvExp>
     <tvExpOptDlg>0</tvExpOptDlg>
     <cbSel>0</cbSel>
     <RteFlg>0</RteFlg>
@@ -274,10 +285,10 @@
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
-      <ColumnNumber>68</ColumnNumber>
+      <ColumnNumber>0</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>91</TopLine>
-      <CurrentLine>111</CurrentLine>
+      <TopLine>148</TopLine>
+      <CurrentLine>188</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>.\src\main_task_exp.c</PathWithFileName>
       <FilenameWithoutPath>main_task_exp.c</FilenameWithoutPath>
