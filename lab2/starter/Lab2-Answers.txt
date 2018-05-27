@@ -44,7 +44,8 @@
     will return OS_R_MBX if the task has waited until a message was put in the mailbox
     (i.e. the task was blocked to wait for a message to arrive and then unblocked when
     the message arrives). Read the rt_Mailbox.c file and find the lines where the return
-    value of OS_R_MBX is set. Why does the corresponding kernel function rt_mbx_wait()
+    value of OS_R_MBX is set. 
+    Why does the corresponding kernel function rt_mbx_wait()
     not have a line to set the return value to OS_R_MBX? You may skip the code in
     functions isr_mbx_receive() and rt_mbx_psh() for the purpose of completing this
     assignment.
