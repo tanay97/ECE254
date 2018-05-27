@@ -45,5 +45,5 @@ manual/*.toc
 *~
 *.bak
 *.uvgui.*
-*/CM3_LE.BAT
+*.BAT
 *svc_table._ia

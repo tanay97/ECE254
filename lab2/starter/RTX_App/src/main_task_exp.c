@@ -60,36 +60,40 @@ __task void task2(void)
 	U8 i=1;
 	RL_TASK_INFO task_info;
 	
-  
-	os_mut_wait(g_mut_uart, 0xFFFF);
-	printf("TID\tNAME\t\tPRIO\tSTATE   \t%%STACK\n");
-	os_mut_release(g_mut_uart);
-    
-	for(i = 0; i <3; i++) { // this is a lazy way of doing loop.
-		if (os_tsk_get(i+1, &task_info) == OS_R_OK) {
+  for(;;) {
+		os_mut_wait(g_mut_uart, 0xFFFF);
+		printf("\nTID\tNAME\t\tPRIO\tSTATE   \t%%STACK\n");
+		os_mut_release(g_mut_uart);
+			
+		for(i = 0; i <3; i++) { // this is a lazy way of doing loop.
+			if (os_tsk_get(i+1, &task_info) == OS_R_OK) {
+				os_mut_wait(g_mut_uart, 0xFFFF);  
+				printf("%d\t%s\t\t%d\t%s\t%d%%\n", \
+							 task_info.task_id, \
+							 fp2name(task_info.ptask, g_tsk_name), \
+							 task_info.prio, \
+							 state2str(task_info.state, g_str),  \
+							 task_info.stack_usage);
+				os_mut_release(g_mut_uart);
+			} 
+		}
+			
+		if (os_tsk_get(0xFF, &task_info) == OS_R_OK) {
 			os_mut_wait(g_mut_uart, 0xFFFF);  
 			printf("%d\t%s\t\t%d\t%s\t%d%%\n", \
-			       task_info.task_id, \
-			       fp2name(task_info.ptask, g_tsk_name), \
-			       task_info.prio, \
-			       state2str(task_info.state, g_str),  \
-			       task_info.stack_usage);
+						 task_info.task_id, \
+						 fp2name(task_info.ptask, g_tsk_name), \
+						 task_info.prio, \
+						 state2str(task_info.state, g_str),  \
+						 task_info.stack_usage);
 			os_mut_release(g_mut_uart);
 		} 
+		#ifdef MYSIM
+		os_dly_wait(2);
+		#else
+		os_dly_wait(200);
+		#endif
 	}
-    
-	if (os_tsk_get(0xFF, &task_info) == OS_R_OK) {
-		os_mut_wait(g_mut_uart, 0xFFFF);  
-		printf("%d\t%s\t\t%d\t%s\t%d%%\n", \
-		       task_info.task_id, \
-		       fp2name(task_info.ptask, g_tsk_name), \
-		       task_info.prio, \
-		       state2str(task_info.state, g_str),  \
-		       task_info.stack_usage);
-		os_mut_release(g_mut_uart);
-	} 
-    
-	for(;;);
 }
 
 /*--------------------------- init ------------------------------------*/
@@ -100,7 +104,7 @@ __task void init(void)
 	os_mut_init(&g_mut_uart);
   
 	os_mut_wait(g_mut_uart, 0xFFFF);
-	printf("init: TID = %d\n", os_tsk_self());
+	printf("init: the init TID is %d\n", os_tsk_self());
 	os_mut_release(g_mut_uart);
   
 	g_tid = os_tsk_create(task1, 1);  /* task 1 at priority 1 */
