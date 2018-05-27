@@ -37,25 +37,25 @@
 /*  The following are added for ECE254 Lab Task Management Assignmet       */
 /*==========================================================================*/
 
-/*---------------- rt_alloc_box_s, task blocks when out of memory-----------*/
-
 /**  
-   @brief: Blocking memory allocation routine.
+ * os_mem_alloc(mem_pool) calls this function.
+ * @brief: Request a block of memory from the memory pool and block the calling
+ * 			task if no memory is available in the memory pool
  */
-void *rt_alloc_box_s (void *p_mpool) {
+void *rt_mem_alloc (void *mem_pool) {
 	
 	/* Add your own code here. Change the following line accordingly */
 	return NULL;
 }
 
 
-/*----------- rt_free_box_s, pair with _s memory allocators ----------------*/
 /**
- * @brief: free memory pointed by ptr, it will unblock a task that is waiting
- *         for memory.
- * @return: OS_R_OK on success and OS_R_NOK if ptr does not belong to gp_mpool 
+ * os_mem_free(mem_pool, box) calls this function.
+ * free the memory pointed by box, it will unblock any task that might be 
+ * 		waiting for memory.
+ * @return: OS_R_OK on success and OS_R_NOK if box does not belong to mem_pool 
  */
-OS_RESULT rt_free_box_s (void *p_mpool, void *box) {
+OS_RESULT rt_mem_free (void *mem_pool, void *box) {
 	/* Add your own code here. Change the following line accordingly */
 	return (OS_R_OK);
 }

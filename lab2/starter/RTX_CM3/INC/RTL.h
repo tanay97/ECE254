@@ -366,19 +366,6 @@ extern int       _init_box (void *box_mem, U32 box_size, U32 blk_size);
 extern void     *_alloc_box (void *box_mem);
 extern void     *_calloc_box (void *box_mem);
 extern int       _free_box (void *box_mem, void *box);
-
-/* ECE254 Comment: Blocking Memory Management Functions added for lab1*/
-/*
-extern void     *rt_alloc_box_s (void *box_mee);
-extern void     *_calloc_box_s (void *box_mem);
-extern OS_RESULT rt_free_box_s  (void *ptr);
-
-#define os_mem_alloc(flag)    _os_mem_alloc((U32)rt_mem_alloc, flag)
-#define os_mem_free(ptr)      _os_mem_free ((U32)rt_mem_free, ptr)
-
-extern void *_os_mem_alloc (U32 p, U8 flag)                            __SVC_0;
-extern int   _os_mem_free  (U32 p, void *ptr)                          __SVC_0;
-*/
 #endif
 
 #define BOX_ALIGN_8     0x80000000

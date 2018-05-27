@@ -68,15 +68,7 @@ typedef U32 OS_RESULT;
 #define OS_ERR_FIFO_OVF 2
 #define OS_ERR_MBX_OVF  3
 
-#if !(__TARGET_ARCH_6S_M || __TARGET_ARCH_7_M || __TARGET_ARCH_7E_M)
-
-/*----------------------------------------------------------------------------
- *      Functions ARM
- *---------------------------------------------------------------------------*/
-
-
-#else
-
+#if (__TARGET_ARCH_6S_M || __TARGET_ARCH_7_M || __TARGET_ARCH_7E_M)
 /*----------------------------------------------------------------------------
  *      Functions Cortex-M
  *---------------------------------------------------------------------------*/
@@ -110,29 +102,29 @@ typedef struct rl_task_info {
 
 /* Task Management */
 
-/* ECE254 Comment: added for ECE254 lab2 Proc Management Assignment  */
+/* ECE254 Comment: added for ECE254 lab1  */
 extern int rt_tsk_count_get (void); 
-
-/* ECE254 Comment: added for ECE254 lab3 Proc Management Assignment   */
 extern OS_RESULT rt_tsk_get (OS_TID task_id, RL_TASK_INFO *p_task_info); 
-extern void     *rt_alloc_box_s (void *mpool);
-extern OS_RESULT rt_free_box_s  (void *mpool, void *ptr);
 
-/* ECE254 Comment: added for ECE254 lab2 Proc Management Assignment  */
-#define os_tsk_count_get()   _os_tsk_count_get((U32)rt_tsk_count_get)
+/* ECE254 Comment: added for ECE254 lab2   */
+extern void     *rt_mem_alloc (void *mem_pool);
+extern OS_RESULT rt_mem_free  (void *mem_pool, void *box);
 
-/* ECE254 Comment: added for ECE254 lab3 Proc Management Assignment   */
+/* ECE254 Comment: added for ECE254 lab1  */
+#define os_tsk_count_get()                 _os_tsk_count_get((U32)rt_tsk_count_get)
 #define os_tsk_get(task_id, p_task_info)   _os_tsk_get((U32)rt_tsk_get, task_id, p_task_info)
-#define os_mem_alloc(mpool)                _os_mem_alloc((U32)rt_alloc_box_s, mpool)
-#define os_mem_free(mpool, ptr)            _os_mem_free ((U32)rt_free_box_s, mpool, ptr)
+
+/* ECE254 Comment: added for ECE254 lab2   */
+#define os_mem_alloc(mem_pool)             _os_mem_alloc((U32)rt_mem_alloc, mem_pool)
+#define os_mem_free(mem_pool, box)         _os_mem_free ((U32)rt_mem_free, mem_pool, box)
 
 /* ECE254 Comment: added for ECE254 lab2 Proc Management Assignment  */
-extern int _os_tsk_count_get (U32 p) __SVC_0;
-
-/* ECE254 Comment: added for ECE254 lab3 Proc Management Assignment   */
+extern int       _os_tsk_count_get (U32 p) __SVC_0;
 extern OS_RESULT _os_tsk_get (U32 p, OS_TID task_id, RL_TASK_INFO *p_task_info) __SVC_0;
-extern void     *_os_mem_alloc (U32 p, void *mpool)                             __SVC_0;
-extern int       _os_mem_free  (U32 p, void *mpool, void *ptr)                  __SVC_0;
+
+/* ECE254 Comment: added for ECE254 lab2   */
+extern void *_os_mem_alloc (U32 p, void *mpool)            __SVC_0;
+extern int  _os_mem_free  (U32 p, void *mpool, void *ptr)  __SVC_0;
 
 #endif
 

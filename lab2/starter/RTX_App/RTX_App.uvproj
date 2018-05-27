@@ -434,6 +434,16 @@
           </Files>
         </Group>
         <Group>
+          <GroupName>Helpers</GroupName>
+          <Files>
+            <File>
+              <FileName>lab2_helper.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\src\lab2_helper.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
           <GroupName>RTX Lib</GroupName>
           <Files>
             <File>

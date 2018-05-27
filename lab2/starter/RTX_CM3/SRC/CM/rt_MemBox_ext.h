@@ -12,8 +12,8 @@
 /* Variables */
 
 /* Functions */
-extern void     *rt_alloc_box_s (void *mpool);
-extern OS_RESULT rt_free_box_s  (void *mpool, void *ptr);
+extern void     *rt_mem_alloc (void *mem_pool);
+extern OS_RESULT rt_mem_free  (void *mem_pool, void *box);
 
 /*----------------------------------------------------------------------------
  * end of file

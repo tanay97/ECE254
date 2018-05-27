@@ -12,7 +12,7 @@
 #include <stdio.h>
 #include <string.h>
 
-#define NUM_FNAMES 4
+#define NUM_NAMES 4
 
 struct func_info {
   void (*p)();      /* function pointer */
@@ -24,7 +24,7 @@ __task void task1(void);
 __task void task2(void);
 __task void init (void);
  
-char *state2str(unsigned char state, char *str);
+extern char *state2str(unsigned char state, char *str);
 char *fp2name(void (*p)(), char *str);
 
 OS_MUT g_mut_uart;
@@ -34,7 +34,7 @@ int  g_counter = 0;  // a global counter
 char g_str[16];
 char g_tsk_name[16];
 
-struct func_info g_task_map[NUM_FNAMES] = \
+struct func_info g_task_map[NUM_NAMES] = \
 {
   /* os_idle_demon function ptr to be initialized in main */
   {NULL,  "os_idle_demon"}, \
@@ -46,6 +46,8 @@ struct func_info g_task_map[NUM_FNAMES] = \
 /* no local variables defined, use one global var */
 __task void task1(void)
 {
+	os_mem_alloc(NULL);
+	os_mem_free(NULL,NULL);
 	for (;;) {
 		g_counter++;
 	}
@@ -62,30 +64,28 @@ __task void task2(void)
 	
   for(;;) {
 		os_mut_wait(g_mut_uart, 0xFFFF);
-		printf("\nTID\tNAME\t\tPRIO\tSTATE   \t%%STACK\n");
+		printf("\nTID\tNAME\t\tPRIO\tSTATE\n");
 		os_mut_release(g_mut_uart);
 			
 		for(i = 0; i <3; i++) { // this is a lazy way of doing loop.
 			if (os_tsk_get(i+1, &task_info) == OS_R_OK) {
 				os_mut_wait(g_mut_uart, 0xFFFF);  
-				printf("%d\t%s\t\t%d\t%s\t%d%%\n", \
+				printf("%d\t%s\t\t%d\t%s\n", \
 							 task_info.task_id, \
 							 fp2name(task_info.ptask, g_tsk_name), \
 							 task_info.prio, \
-							 state2str(task_info.state, g_str),  \
-							 task_info.stack_usage);
+							 state2str(task_info.state, g_str));
 				os_mut_release(g_mut_uart);
 			} 
 		}
 			
 		if (os_tsk_get(0xFF, &task_info) == OS_R_OK) {
 			os_mut_wait(g_mut_uart, 0xFFFF);  
-			printf("%d\t%s\t\t%d\t%s\t%d%%\n", \
+			printf("%d\t%s\t\t%d\t%s\n", \
 						 task_info.task_id, \
 						 fp2name(task_info.ptask, g_tsk_name), \
 						 task_info.prio, \
-						 state2str(task_info.state, g_str),  \
-						 task_info.stack_usage);
+						 state2str(task_info.state, g_str));
 			os_mut_release(g_mut_uart);
 		} 
 		#ifdef MYSIM
@@ -120,52 +120,6 @@ __task void init(void)
 	os_tsk_delete_self();     /* task MUST delete itself before exiting */
 }
 
-/**
- * @brief: convert state numerical value to string represenation      
- * @param: state numerical value (macro) of the task state
- * @param: str   buffer to save the string representation, 
- *               buffer to be allocated by the caller
- * @return:the string starting address
- */
-char *state2str(unsigned char state, char *str)
-{
-	switch (state) {
-	case INACTIVE:
-		strcpy(str, "INACTIVE");
-		break;
-	case READY:
-		strcpy(str, "READY   ");
-		break;
-	case RUNNING:
-		strcpy(str, "RUNNING ");
-		break;
-	case WAIT_DLY:
-		strcpy(str, "WAIT_DLY");
-		break;
-	case WAIT_ITV:
-		strcpy(str, "WAIT_ITV");
-		break;
-	case WAIT_OR:
-		strcpy(str, "WAIT_OR");
-		break;
-	case WAIT_AND:
-		strcpy(str, "WAIT_AND");
-		break;
-	case WAIT_SEM:
-		strcpy(str, "WAIT_SEM");
-		break;
-	case WAIT_MBX:
-		strcpy(str, "WAIT_MBX");
-		break;
-	case WAIT_MUT:
-		strcpy(str, "WAIT_MUT");
-		break;
-	default:
-		strcpy(str, "UNKNOWN");    
-	}
-	return str;
-}
-
 /** 
  * @brief: get function name by function pointer
  * @param: p the entry point of a function (i.e. function pointer)
@@ -175,30 +129,26 @@ char *state2str(unsigned char state, char *str)
 char *fp2name(void (*p)(), char *str)
 {
 	int i;
-	unsigned char is_found = 0;
   
-	for ( i = 0; i < NUM_FNAMES; i++) {
+	for ( i = 0; i < NUM_NAMES; i++) {
 		if (g_task_map[i].p == p) {
 			str = strcpy(str, g_task_map[i].name);  
-			is_found = 1;
-			break;
+			return str;
 		}
 	}
-	if (is_found == 0) {
-		strcpy(str, "ghost");
-	}
+	strcpy(str, "ghost");
 	return str;
 }
 
 int main(void)
 {
 	SystemInit();         /* initialize the LPC17xx MCU */
-	uart0_init();         /* initilize the first UART */
+	uart0_init();         /* initialize the first UART */
   
   
 	/* fill the fname map with os_idle_demon entry point */
 	g_task_map[0].p = os_idle_demon;
   
 	printf("Calling os_sys_init()...\n");
-	os_sys_init(init);    /* initilize the OS and start the first task */
+	os_sys_init(init);    /* initialize the OS and start the first task */
 }
