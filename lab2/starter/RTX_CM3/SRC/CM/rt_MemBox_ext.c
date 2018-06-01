@@ -43,7 +43,6 @@
  * 			task if no memory is available in the memory pool
  */
 void *rt_mem_alloc (void *mem_pool) {
-	
 	/* Add your own code here. Change the following line accordingly */
 	return NULL;
 }
