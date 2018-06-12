@@ -8,6 +8,8 @@
  * A valid posix queue name must start with a "/". 
  * Execute command "man mq_overview" for details.
  * Check /dev/mqueue to clean up the queue if sender fails to do so.
+ * 
+ * DOES NOT WORK in Cgywin or Windows Subsystem for Linux
  */
 
 #include <string.h>
@@ -52,18 +54,17 @@ int main(int argc, char *argv[])
 
 	srand(time(0));
 
-	printf("Press a key to send a random point.\n");
-	getchar();
+	printf("Press the ENTER key to send a random point ('q'+ENTER to quit).\n> ");
 	do {
+		quit = getchar();
 		struct point pt;
 
 		set_position(rand() % 80, rand() % 24, &pt); 
 		if (mq_send(qdes, (char *)&pt, sizeof(struct point), 0) == -1) {
 			perror("mq_send() failed");
 		}
-		printf("Sending a random point at (%d, %d)...\n", \
+		printf("Sending a random point at (%d, %d)...\n> ", \
 		       get_x_coord(pt), get_y_coord(pt));
-		quit = getchar();
 	} while (quit != 'q');
 
 

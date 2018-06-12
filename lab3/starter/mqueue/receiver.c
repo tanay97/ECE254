@@ -7,6 +7,8 @@
  * EXAMPLE: ./receiver.out /mailbox1_userid 
  * A valid posix queue name must start with a "/". 
  * Execute command "man mq_overview" for details.
+ * 
+ * DOES NOT WORK in Cgywin or Windows Subsystem for Linux
  */
 
 #include <stdbool.h>
@@ -64,7 +66,7 @@ int main(int argc, char *argv[])
 		/* only block for a limited time if the queue is empty */
 		if (mq_timedreceive(qdes, (char *) &pt, \
 		    sizeof(struct point), 0, &ts) == -1) {
-			perror("mq_timedreceive() failed");
+			perror("\nmq_timedreceive() failed");
 			printf("Type Ctrl-C and wait for 5 seconds to terminate.\n");
 		} else {
 			printf("Received a random point at (%d, %d)\n", \
