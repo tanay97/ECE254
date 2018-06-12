@@ -17,8 +17,8 @@ PROGRAMS	= fork-exec
 all: $(PROGRAMS)
 
 fork-exec: fork-exec.c 
-	gcc -o $@ $<
+	gcc -o $@.out $<
 
 # Clean up build products.
 clean:
-	rm -f *.o *.a $(PROGRAMS)
+	rm -f *.o *.a *.out
