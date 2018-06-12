@@ -12,8 +12,8 @@ struct point {
 	int y;	/* y coordinate */
 };
 
-inline void set_position(int x, int y, struct point *buf);
-inline int get_x_coord (struct point p);
-inline int get_y_coord (struct point p);
+extern void set_position(int x, int y, struct point *buf);
+extern int get_x_coord (struct point p);
+extern int get_y_coord (struct point p);
 
 #endif /* POINT_H_ */
