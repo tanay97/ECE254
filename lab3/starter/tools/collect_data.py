@@ -33,7 +33,7 @@ def call_produce(program, cmd_str, num_repeat_calls):
         output = subprocess.check_output('{} {}'.format(program, cmd_str), stderr=subprocess.STDOUT, shell=True)
         matchObj = re.search(r'System execution time: ([0-9.]+) seconds', output)
         if matchObj:
-            if DEBUG and i==1:
+            if DEBUG and i==0:
                 print 'Time: {} sec'.format(matchObj.group(1))
             times[cmd_str].append(float(matchObj.group(1)))
         else:
@@ -79,9 +79,19 @@ def generate_stats_table():
             k = key.split()
             file.write('{},{},{},{},{},{}\n'.format(k[0],k[1],k[2],k[3], avg, std))
 
+def dump_raw_times():
+    '''
+    Writes the raw times to a csv file
+    '''
+    with open('lab3-times.csv', 'w') as file:
+        for key in times:
+            t = str(times[key])
+            file.write('{},{}\n'.format(key,t[1:-1]))
+
 def main():
     generate_test_data(N,B,P,C)
     generate_stats_table()
+    dump_raw_times()
 
 
 
