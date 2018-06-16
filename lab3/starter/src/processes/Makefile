@@ -15,7 +15,7 @@ all: ${TARGETS}
 
 
 produce: $(OBJS) 
-	$(LD) $(LDFLAGS) -o $@ $^ $(LDLIBS) 
+	$(LD) $(LDFLAGS) -o $@.out $^ $(LDLIBS) 
 
 %.o: %.c 
 	$(CC) $(CFLAGS) -c $< 
@@ -23,8 +23,6 @@ produce: $(OBJS)
 %.d: %.c
 	gcc -MM -MF $@ $<
 
--include $(SRCS:.c=.d)
-
 .PHONY: clean
 clean:
-	rm -f *.d *.o $(TARGETS) 
+	rm -f *.d *.o *.out

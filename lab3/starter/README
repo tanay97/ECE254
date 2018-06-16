@@ -14,5 +14,9 @@ tools/
     - data transmission time, and 
     - standard deviation of the data transmission time samples.
 
-lab3/
-    Contains a Makefile and skeleton code you may use to start the Lab 3 deliverable
+src/
+    - Contains the skeleton for the Lab 3 Deliverable
+    processes/
+        - Your produce.c should create separate processes for Producers and Consumers
+    threads/
+        - Your produce.c should create separate threads for Producers and Consumers
