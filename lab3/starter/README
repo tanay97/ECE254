@@ -1,10 +1,10 @@
-ALP/  
+examples/ALP/  
     Sample code of fork from Advanced Linux Programming book.
 
-gettimeofday/ 
+examples/gettimeofday/ 
     Sample code of using gettimeofday
 
-mqueue/
+examples/mqueue/
     Sample code of using POSIX queue functions
 
 tools/
@@ -13,3 +13,6 @@ tools/
     - standard deviation of the system initialization time samples,
     - data transmission time, and 
     - standard deviation of the data transmission time samples.
+
+lab3/
+    Contains a Makefile and skeleton code you may use to start the Lab 3 deliverable

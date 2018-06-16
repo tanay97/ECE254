@@ -47,3 +47,5 @@ manual/*.toc
 *.uvgui.*
 *.BAT
 *svc_table._ia
+
+lab3/starter/lab3/produce
