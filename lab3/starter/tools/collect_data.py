@@ -2,6 +2,7 @@ import subprocess
 import re
 import os
 from math import sqrt
+import sys
 
 # SETTINGS
 PROG = "./produce.out"
@@ -10,7 +11,7 @@ B = [4, 8]
 P = [1, 2, 3]
 C = [1, 2, 3]
 # FOR TESTING: reduce this number when debugging
-X = 50  # number of times to repeat the test
+X = 500  # number of times to repeat the test
 
 # This data structure holds the raw data for each test run
 times = {}
@@ -34,7 +35,7 @@ def call_produce(program, cmd_str, num_repeat_calls):
         matchObj = re.search(r'System execution time: ([0-9.]+) seconds', output)
         if matchObj:
             if DEBUG and i==0:
-                print 'Time: {} sec'.format(matchObj.group(1))
+                print ' > First Returned Time: {} sec'.format(matchObj.group(1))
             times[cmd_str].append(float(matchObj.group(1)))
         else:
             print '\nError trying to find time for the following output:'
@@ -42,6 +43,7 @@ def call_produce(program, cmd_str, num_repeat_calls):
             quit(1)
         if i % 10 == 0:
             print '.',
+            sys.stdout.flush()
     print ''
 
 
@@ -78,6 +80,7 @@ def generate_stats_table():
 
             k = key.split()
             file.write('{},{},{},{},{},{}\n'.format(k[0],k[1],k[2],k[3], avg, std))
+    print 'Written the statistics out to lab3-stats.csv'
 
 def dump_raw_times():
     '''
@@ -87,9 +90,11 @@ def dump_raw_times():
         for key in times:
             t = str(times[key])
             file.write('{},{}\n'.format(key,t[1:-1]))
+    print 'Written the raw times out to lab3-times.csv'
 
 def main():
     generate_test_data(N,B,P,C)
+    print '='*50
     generate_stats_table()
     dump_raw_times()
 
