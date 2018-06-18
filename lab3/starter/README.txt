@@ -8,11 +8,10 @@ examples/mqueue/
     Sample code of using POSIX queue functions
 
 tools/
-    A shell script to run each given (N,B,P,C) 500 times and compute the following items: 
-    - average system initialization time, 
-    - standard deviation of the system initialization time samples,
-    - data transmission time, and 
-    - standard deviation of the data transmission time samples.
+    A python script to run each given (N,B,P,C) 500 times and compute the following items: 
+    - average run time, 
+    - standard deviation of the run time
+    NOTE: copy this file to the same folder as './produce.out' and then run it (python collect_data.py)
 
 src/
     - Contains the skeleton for the Lab 3 Deliverable
