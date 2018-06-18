@@ -28,6 +28,7 @@ extern char *state2str(unsigned char state, char *str);
 char *fp2name(void (*p)(), char *str);
 
 OS_MUT g_mut_uart;
+OS_MUT g_mut_evnt;
 OS_TID g_tid = 255;
 
 int  g_counter = 0;  // a global counter
@@ -46,6 +47,21 @@ struct func_info g_task_map[NUM_NAMES] = \
 /* no local variables defined, use one global var */
 __task void task1(void)
 {
+	os_mut_wait(g_mut_uart, 0xFFFF);
+	printf("Taks1: I am wating for task 2 to finish\n");
+	os_mut_release(g_mut_uart);
+	
+	os_dly_wait(2);
+	
+	/****/os_mut_wait(g_mut_evnt, 0xFFFF);
+	
+	os_mut_wait(g_mut_uart, 0xFFFF);
+	printf("Taks1: I am Doing Stuff\n");
+	os_mut_release(g_mut_uart);
+	
+	/****/os_mut_release(g_mut_evnt);
+	
+	
 	os_mem_alloc(NULL);
 	os_mem_free(NULL,NULL);
 	for (;;) {
@@ -61,6 +77,13 @@ __task void task2(void)
 {
 	U8 i=1;
 	RL_TASK_INFO task_info;
+	/****/os_mut_wait(g_mut_evnt, 0xFFFF);
+	
+	os_mut_wait(g_mut_uart, 0xFFFF);
+	printf("Taks2: I am Doing Stuff that must occur before Task 1 runs\n");
+	os_mut_release(g_mut_uart);
+	
+	/****/os_mut_release(g_mut_evnt);
 	
   for(;;) {
 		os_mut_wait(g_mut_uart, 0xFFFF);
@@ -102,7 +125,8 @@ __task void task2(void)
 __task void init(void)
 {
 	os_mut_init(&g_mut_uart);
-  
+	os_mut_init(&g_mut_evnt);
+	
 	os_mut_wait(g_mut_uart, 0xFFFF);
 	printf("init: the init TID is %d\n", os_tsk_self());
 	os_mut_release(g_mut_uart);
