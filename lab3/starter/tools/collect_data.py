@@ -14,7 +14,7 @@ C = [1, 2, 3]
 X = 500  # number of times to repeat the test
 
 # This data structure holds the raw data for each test run
-times = {}
+times = []
 
 DEBUG = True
 
@@ -28,15 +28,14 @@ def call_produce(program, cmd_str, num_repeat_calls):
     '''
     print 'Calling "{} {}", {} times'.format(program, cmd_str, num_repeat_calls)
 
-    if cmd_str not in times:
-        times[cmd_str] = []
+    my_times = []
     for i in xrange(num_repeat_calls):
         output = subprocess.check_output('{} {}'.format(program, cmd_str), stderr=subprocess.STDOUT, shell=True)
         matchObj = re.search(r'System execution time: ([0-9.]+) seconds', output)
         if matchObj:
             if DEBUG and i==0:
                 print ' > First Returned Time: {} sec'.format(matchObj.group(1))
-            times[cmd_str].append(float(matchObj.group(1)))
+            my_times.append(1000.0 * float(matchObj.group(1)))
         else:
             print '\nError trying to find time for the following output:'
             print output
@@ -44,6 +43,7 @@ def call_produce(program, cmd_str, num_repeat_calls):
         if i % 10 == 0:
             print '.',
             sys.stdout.flush()
+    times.append({'cmd':cmd_str, 'times':my_times})
     print ''
 
 
@@ -54,17 +54,46 @@ def generate_test_data(numbers_to_produce, buffer_sizes, nums_producers, nums_co
     '''
     Calls the specific test cases asked for by the lab.
     '''
-    test_case = 1
-    for n in numbers_to_produce:
-        for b in buffer_sizes:
-            for p in nums_producers:
-                for c in nums_consumers:
-                    if ((c == 1) or (p == 1)):
-                        if not(n == 398 and b == 4):
-                            print 'Test Case #{}'.format(test_case)
-                            test_case += 1
-                            call_produce(PROG, '{} {} {} {}'.format(n, b, p, c), X)
-                            print ''
+    test_cases = [
+        # N=100, B=4
+        {'N':100, 'B':4, 'P':1, 'C':1},
+        {'N':100, 'B':4, 'P':1, 'C':2},
+        {'N':100, 'B':4, 'P':1, 'C':3}, 
+        
+        {'N':100, 'B':4, 'P':2, 'C':1},
+        {'N':100, 'B':4, 'P':3, 'C':1}, 
+
+        {'N':100, 'B':4, 'P':2, 'C':2},
+        {'N':100, 'B':4, 'P':3, 'C':3},
+        #############################
+        # N=100, B=8
+        {'N':100, 'B':8, 'P':1, 'C':1},
+        {'N':100, 'B':8, 'P':1, 'C':2}, 
+        {'N':100, 'B':8, 'P':1, 'C':3}, 
+
+        {'N':100, 'B':8, 'P':2, 'C':1}, 
+        {'N':100, 'B':8, 'P':3, 'C':1}, 
+
+        {'N':100, 'B':8, 'P':2, 'C':2},
+        {'N':100, 'B':8, 'P':3, 'C':3},
+        #############################
+        # N=398, B=8
+        {'N':398, 'B':8, 'P':1, 'C':1},
+        {'N':398, 'B':8, 'P':1, 'C':2}, 
+        {'N':398, 'B':8, 'P':1, 'C':3},  
+        
+        {'N':398, 'B':8, 'P':2, 'C':1}, 
+        {'N':398, 'B':8, 'P':3, 'C':1},  
+
+        {'N':398, 'B':8, 'P':2, 'C':2}, 
+        {'N':398, 'B':8, 'P':3, 'C':3},  
+    ]
+    i = 1
+    for t in test_cases:
+        print 'Test Case: {}/{}'.format(i, len(test_cases))
+        i += 1
+        call_produce(PROG, '{} {} {} {}'.format(t['N'], t['B'], t['P'], t['C']), X)
+        print ''
 
 def generate_stats_table():
     '''
@@ -72,13 +101,13 @@ def generate_stats_table():
     containing the average time and the standard deviation.
     '''
     with open('lab3-stats.csv', 'w') as file:
-        file.write("N,B,P,C,Average Time,Standard Deviation\n")
+        file.write("N,B,P,C,Average Time (ms),Standard Deviation (ms)\n")
 
-        for key in times:
-            avg = sum(times[key]) / float(len(times[key]))
-            std = sqrt(float(reduce(lambda x, y: x + y, map(lambda x: (x - avg) ** 2, times[key]))) / float(len(times[key])))
+        for t in times:
+            avg = sum(t['times']) / float(len(t['times']))
+            std = sqrt(float(reduce(lambda x, y: x + y, map(lambda x: (x - avg) ** 2, t['times']))) / float(len(t['times'])))
 
-            k = key.split()
+            k = t['cmd'].split()
             file.write('{},{},{},{},{},{}\n'.format(k[0],k[1],k[2],k[3], avg, std))
     print 'Written the statistics out to lab3-stats.csv'
 
@@ -87,9 +116,9 @@ def dump_raw_times():
     Writes the raw times to a csv file
     '''
     with open('lab3-times.csv', 'w') as file:
-        for key in times:
-            t = str(times[key])
-            file.write('{},{}\n'.format(key,t[1:-1]))
+        for k in times:
+            t = str(k['times'])
+            file.write('{},{}\n'.format(k['cmd'],t[1:-1]))
     print 'Written the raw times out to lab3-times.csv'
 
 def main():
