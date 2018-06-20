@@ -6,12 +6,8 @@ import sys
 
 # SETTINGS
 PROG = "./produce.out"
-N = [100, 398]
-B = [4, 8]
-P = [1, 2, 3]
-C = [1, 2, 3]
 # FOR TESTING: reduce this number when debugging
-X = 500  # number of times to repeat the test
+X = 5  # number of times to repeat the test
 
 # This data structure holds the raw data for each test run
 times = []
@@ -50,7 +46,7 @@ def call_produce(program, cmd_str, num_repeat_calls):
 
 
 
-def generate_test_data(numbers_to_produce, buffer_sizes, nums_producers, nums_consumers):
+def generate_test_data():
     '''
     Calls the specific test cases asked for by the lab.
     '''
@@ -122,7 +118,7 @@ def dump_raw_times():
     print 'Written the raw times out to lab3-times.csv'
 
 def main():
-    generate_test_data(N,B,P,C)
+    generate_test_data()
     print '='*50
     generate_stats_table()
     dump_raw_times()
