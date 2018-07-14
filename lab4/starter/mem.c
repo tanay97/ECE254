@@ -12,7 +12,7 @@
 
 /* defines */
 
-/* global varaiables */
+/* global variables */
 
 
 /* Functions */
