@@ -105,7 +105,7 @@ int consume(int cid, int maxmsg){
 	
 		}
 		else{
-			printf("received %d \n", p);
+			//printf("received %d \n", p);
 			if (isPerfectSquare(p)){
 				printf("%d %d %d \n", cid, p, (int) sqrt(p));
 			}
