@@ -29,7 +29,7 @@ int isPerfectSquare(int number)
 	return 0;
 }
 
-int produce(int pid, int num_p, int maxmsg, int num){
+int produce(int pid, int num_p, int num_c, int maxmsg, int num){
 	mqd_t qdes;
 	char *qname = "/q";
 	mode_t mode = S_IRUSR | S_IWUSR;
@@ -52,8 +52,10 @@ int produce(int pid, int num_p, int maxmsg, int num){
 			//printf("producing %d by %d \n", i, pid);
 		}
 	}
-	int i = -1;
-	mq_send(qdes, (char*)&i, sizeof(int), 0); 
+	int kill_code = -1;
+	for(int i = 0; i < num_c; i++){
+		mq_send(qdes, (char*)&kill_code, sizeof(int), 0); 
+	}
 	mq_close(qdes);
 	return 0;	
 	
@@ -84,12 +86,13 @@ int consume(int cid, int maxmsg){
 		if (p == -1){
 			loop = 0;
 			//printf("killing %d \n", cid);
+	
 		}
-		if (isPerfectSquare(p)){
-			printf("%d %d %d \n", cid, p, (int) sqrt(p));
-		}
-		//printf("received %d by %d \n", p, cid);	 
-		
+		else{
+			if (isPerfectSquare(p)){
+				printf("%d %d %d \n", cid, p, (int) sqrt(p));
+			}
+		}	
 			
 		//mq_receive(qdes, (char *) &p, sizeof(int), 0);
 		
@@ -119,9 +122,9 @@ int main(int argc, char *argv[])
 	num_p = atoi(argv[3]);  /* number of producers        */
 	num_c = atoi(argv[4]);  /* number of consumers        */
 
-	pid_t pid; 
-	pid_t wpid; 
 	int status = 0;
+	
+	pid_t pid, wpid;
 
 	gettimeofday(&tv, NULL);
 	g_time[0] = (tv.tv_sec) + tv.tv_usec/1000000.;
@@ -131,10 +134,11 @@ int main(int argc, char *argv[])
 		pid = fork();
 		if (pid == 0){
 			//printf("producer created %d \n", i);
-			produce(i, num_p, maxmsg, num);
+			produce(i, num_p, num_c, maxmsg, num);
 			exit(0);	
 		}				
 	}
+	
 	for(int i = 0; i < num_c; i++){
 		pid = fork();
 		if (pid == 0){
@@ -144,7 +148,13 @@ int main(int argc, char *argv[])
 		}	
 	}
 	
-	while ((wpid = wait(&status)) > 0){}; 
+	while ((wpid == wait(&status)) > 0);	
+
+	mq_unlink("/q");	
+/*	for (int i = 0; i < num_c; i++){
+		waitpid(c_pids[i], &status, 2);
+	}
+
 	/*
  
 
