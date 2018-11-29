@@ -47,6 +47,9 @@ int main(int argc, char *argv[])
 		worst_fit_memory_init(1024);	// initizae 1KB, worst fit
 
 		q = worst_fit_alloc(8);		// allocate 8B
+		worst_fit_alloc(16);
+		worst_fit_alloc(32);
+		// q = worst_fit_alloc(16);
 		printf("worst fit: q=%p\n", q);
 		if ( q != NULL ) {
 			worst_fit_dealloc(q);	
