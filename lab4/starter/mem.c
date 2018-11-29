@@ -60,9 +60,16 @@ int best_fit_memory_init(size_t size)
 
 int worst_fit_memory_init(size_t size)
 {
+	if (size < 0 || size % 4 != 0) {
+		return -1;
+	}
 
-	// To be completed by students
-	// You call malloc once here to obtain the memory to be managed.
+	wfsp_head = (node_t *) malloc(size);
+	printf("Start of memory at: %p, block size is %d bytes\n", wfsp_head, sizeof(node_t));
+	wfsp_head->alloc_size = size - sizeof(node_t);
+
+	wfsp_head->free = 1;
+
 	return 0;
 
 }
@@ -123,6 +130,46 @@ void *best_fit_alloc(size_t size)
 
 void *worst_fit_alloc(size_t size)
 {
+	if (wfsp_head-> next == NULL) {
+		// No memory
+		wfsp_head->next = (node_t *) ((void*)wfsp_head + sizeof(node_t) + size);
+
+		wfsp_head->next->alloc_size = wfsp_head->alloc_size - sizeof(node_t) - size;
+		wfsp_head->next->free = 1;
+		wfsp_head->alloc_size = size;
+		wfsp_head->free = 0;
+
+		return (node_t*) ((void*)wfsp_head + sizeof(node_t));
+	} else {
+		int maxMem = 0;
+		node_t* maxNode = wfsp_head;
+		for (node_t* runner = wfsp_head; runner != NULL; runner = runner->next) {
+			// Find the largest memory block available
+			if (runner->free == 1 && runner->alloc_size > maxMem) {
+				maxMem = runner->alloc_size;
+				maxNode = runner;
+			}
+		}	
+
+		if (maxMem > size) {
+			maxNode->next = (node_t *) ((void*)maxNode + sizeof(node_t) + size);
+
+			maxNode->next->alloc_size = maxNode->alloc_size - sizeof(node_t) - size;
+			maxNode->alloc_size = size;
+			maxNode->free = 0;
+
+			return (node_t*) ((void*)maxNode + sizeof(node_t));
+		} else if (maxMem == size) {
+
+			maxNode->free = 0;
+
+			return (node_t*) ((void*)maxNode + sizeof(node_t));
+		} else {
+			// No Space available
+			return NULL;
+		}
+	}
+
 	// To be completed by students
 	return NULL;
 }
@@ -153,6 +200,12 @@ int best_fit_count_extfrag(size_t size)
 
 int worst_fit_count_extfrag(size_t size)
 {
-	// To be completed by students
+	int count = 0;
+	for (node_t* runner = wfsp_head; runner != NULL; runner = runner->next) {
+		printf("Node location: %p with size %d\n", runner, runner->alloc_size);		
+		if (runner->free && runner->alloc_size > size) {
+			count++;
+		}
+	}
 	return 0;
 }
