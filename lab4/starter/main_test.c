@@ -38,6 +38,11 @@ int main(int argc, char *argv[])
 
 		p = best_fit_alloc(8);		// allocate 8B
 		printf("best fit: p=%p\n", p);
+		p = best_fit_alloc(16);		// allocate 16B
+		printf("best fit: p=%p\n", p);
+		p = best_fit_alloc(20);		// allocate 20B
+		printf("best fit: p=%p\n", p);
+
 		if ( p != NULL ) {
 			best_fit_dealloc(p);	
 		}
