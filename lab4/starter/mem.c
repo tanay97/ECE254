@@ -88,7 +88,7 @@ void *best_fit_alloc(size_t size)
 		bfsp_head->alloc_size = size;
 		bfsp_head->free = 0;
 		
-		printf("new node at %p with size %d \n", bfsp_head->next, bfsp_head->next->alloc_size);
+		printf("allocated node at %p with size %d \n", bfsp_head, bfsp_head->alloc_size);
 		return (void*) ((void*)bfsp_head + sizeof(node_t));
 
 	}
@@ -97,7 +97,7 @@ void *best_fit_alloc(size_t size)
 		int min = 100000;
 		node_t * bf_node = NULL;	
 		for(node_t * runner = bfsp_head; runner != NULL; runner = runner->next){
-			if(runner->alloc_size >= size && runner->alloc_size < min && runner->free == 1){
+			if(runner->alloc_size >= size + sizeof(node_t) && runner->alloc_size < min && runner->free == 1 ){
 				min = runner->alloc_size;
 				bf_node = runner;
 			}
@@ -119,6 +119,7 @@ void *best_fit_alloc(size_t size)
 			bf_node->free = 0;
 			bf_node->alloc_size = size;
 		
+			printf("allocated node at %p with size %d \n", bf_node->next, bf_node->alloc_size);
 			return (void *)bf_node + sizeof(node_t);	
 		}
 	}
