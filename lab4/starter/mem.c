@@ -130,6 +130,7 @@ void *worst_fit_alloc(size_t size)
 			maxNode->next = (node_t *) ((void*)maxNode + sizeof(node_t) + size);
 
 			maxNode->next->alloc_size = maxNode->alloc_size - sizeof(node_t) - size;
+			maxNode->next->free = 1;
 			maxNode->alloc_size = size;
 			maxNode->free = 0;
 
@@ -159,7 +160,24 @@ void best_fit_dealloc(void *ptr)
 
 void worst_fit_dealloc(void *ptr) 
 {
+	node_t* del_ptr = (node_t*) ((void*)ptr - sizeof(node_t));
 
+	// If node after target is free join the memory together
+	if (del_ptr->next->free == 1) {
+		del_ptr->alloc_size = del_ptr->alloc_size + del_ptr->next->alloc_size + sizeof(node_t);
+		del_ptr->next = del_ptr->next->next;
+	}
+		
+	// If node before target is free join the memory together
+	for (node_t* runner = wfsp_head; runner != NULL; runner = runner->next) {
+		if (runner->next == del_ptr && runner->free == 1) {
+			runner->alloc_size = runner->alloc_size + del_ptr->alloc_size + sizeof(node_t);
+			runner->next = del_ptr->next;
+			break;
+		}
+	}
+
+	del_ptr->free = 1;
 	// To be completed by students
 	return;
 }
@@ -177,10 +195,10 @@ int worst_fit_count_extfrag(size_t size)
 {
 	int count = 0;
 	for (node_t* runner = wfsp_head; runner != NULL; runner = runner->next) {
-		printf("Node location: %p with size %d\n", runner, runner->alloc_size);		
+		printf("Node location: %p with size %d with free: %d\n", runner, runner->alloc_size, runner->free);		
 		if (runner->free && runner->alloc_size > size) {
 			count++;
 		}
 	}
-	return 0;
+	return count;
 }
