@@ -76,19 +76,44 @@ void *best_fit_alloc(size_t size)
 		bfsp_head->next = (node_t *)((void*)bfsp_head + sizeof(node_t) + size);
 		printf("adding %p and %d giving %p in hex \n", bfsp_head, sizeof(node_t) + size, bfsp_head->next);
 		bfsp_head->next->alloc_size = bfsp_head->alloc_size - sizeof(node_t) - size; 
+		bfsp_head->next->free = 1;
+
 		bfsp_head->alloc_size = size;
 		bfsp_head->free = 0;
-		 
+		
 		printf("new node at %p with size %d \n", bfsp_head->next, bfsp_head->next->alloc_size);
-		return (node_t*) ((void*)bfsp_head + sizeof(node_t));
+		return (void*) ((void*)bfsp_head + sizeof(node_t));
 
 	}
 
 	else{
-	
+		int min = 100000;
+		node_t * bf_node = NULL;	
 		for(node_t * runner = bfsp_head; runner != NULL; runner = runner->next){
-	 			
+			if(runner->alloc_size >= size && runner->alloc_size < min && runner->free == 1){
+				min = runner->alloc_size;
+				bf_node = runner;
+			}
 		}	
+		if (bf_node) {
+			if(bf_node->alloc_size - size - 4 > sizeof(node_t)){//if there's enough space for one more node and 4 more for 0mod4 address
+				node_t * temp = bf_node->next;
+				bf_node->next = (node_t *) ((void *)bf_node + size + sizeof(node_t)); 
+				bf_node->next->alloc_size = bf_node->alloc_size - sizeof(node_t) - size; 
+				bf_node->next->free = 1;
+			
+				bf_node->next->next = temp;
+				bf_node->next->prev = bf_node;
+
+				if (temp){
+					temp->prev = bf_node->next;
+				}
+			}
+			bf_node->free = 0;
+			bf_node->alloc_size = size;
+		
+			return (void *)bf_node + sizeof(node_t);	
+		}
 	}
 	
 
