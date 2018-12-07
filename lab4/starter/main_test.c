@@ -36,9 +36,9 @@ int main(int argc, char *argv[])
 	if ( algo == 0 ) {
 		best_fit_memory_init(1024);	// initizae 1KB, best fit
 
-		p = best_fit_alloc(8);		// allocate 8B
+		p = best_fit_alloc(10);		// allocate 11B
 		printf("best fit: p=%p\n", p);
-		p = best_fit_alloc(16);		// allocate 16B
+		p = best_fit_alloc(13);		// allocate 13B
 		printf("best fit: p=%p\n", p);
 		p = best_fit_alloc(20);		// allocate 20B
 		printf("best fit: p=%p\n", p);
