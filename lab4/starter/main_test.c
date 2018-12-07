@@ -21,7 +21,7 @@ int main(int argc, char *argv[])
 {
 	int num = 0;
 	int algo = 0; // default algorithm to test is best fit  
-	void *p, *q, *q1, *q2, *q3;
+	void *ptrs[10];
 
 	if (argc != 2) {
 		fprintf(stderr, "Usage: %s <0/1>. 0 for best fit and 1 for worst fit \n", argv[0]);
@@ -34,47 +34,57 @@ int main(int argc, char *argv[])
 	}
 	
 	if ( algo == 0 ) {
+		// Best fit test cases
+
 		best_fit_memory_init(1024);	// initizae 1KB, best fit
 
-		p = best_fit_alloc(8);		// allocate 8B
-		printf("best fit: p=%p\n", p);
-		p = best_fit_alloc(16);		// allocate 16B
-		printf("best fit: p=%p\n", p);
-		p = best_fit_alloc(20);		// allocate 20B
-		printf("best fit: p=%p\n", p);
+		ptrs[0] = best_fit_alloc(8);		// allocate 8B
+		ptrs[1] = best_fit_alloc(16);		// allocate 16B
+		ptrs[2] = best_fit_alloc(14);		// allocate 24B
+		ptrs[3] = best_fit_alloc(32);		// allocate 32B
+		// ptrs[4] = worst_fit_alloc(0);		// should be NULL
+		ptrs[5] = best_fit_alloc(16);		// allocate 16B
+		ptrs[6] = best_fit_alloc(61);		// allocate 64B
+		// ptrs[7] = best_fit_alloc(1000);   // allocate too much space
+		
+		// Should join the middle-block with blocks before and after
+		best_fit_dealloc(ptrs[3]);
+		best_fit_dealloc(ptrs[1]);
+		best_fit_dealloc(ptrs[2]);
 
-		if ( p != NULL ) {
-			best_fit_dealloc(p);	
-		}
-		num = best_fit_count_extfrag(4);
+		num = best_fit_count_extfrag(64);
 	} else if ( algo == 1 ) {
+		// Worst fit test cases
 
 		worst_fit_memory_init(1024);	// initizae 1KB, worst fit
 
-		q = worst_fit_alloc(8);		// allocate 8B
-		q1 = worst_fit_alloc(16);
-		q2 = worst_fit_alloc(32);
-		// q3 = worst_fit_alloc(16);
-		
-		worst_fit_dealloc(q1);
-		worst_fit_dealloc(q2);
-		// // worst_fit_dealloc(q);
-		// worst_fit_dealloc(q3);
-		// worst_fit_dealloc(q3);
-		// q3 = worst_fit_alloc(8);
-		// q = worst_fit_alloc(16);
+		ptrs[0] = worst_fit_alloc(8);		// allocate 8B
+		ptrs[1] = worst_fit_alloc(16);		// allocate 16B
+		ptrs[2] = worst_fit_alloc(14);		// allocate 24B
+		ptrs[3] = worst_fit_alloc(32);		// allocate 32B
+		// ptrs[4] = worst_fit_alloc(0);		// should be NULL
+		ptrs[5] = worst_fit_alloc(16);		// allocate 16B
+		ptrs[6] = worst_fit_alloc(61);		// allocate 64B
+		// ptrs[7] = best_fit_alloc(1000);   // allocate too much space
 
-		// printf("worst fit: q=%p\n", q);
-		// if ( q != NULL ) {
-		// 	worst_fit_dealloc(q);	
-		// }
-		num = worst_fit_count_extfrag(4);
+		
+		// Should join the middle-block with blocks before and after
+		worst_fit_dealloc(ptrs[3]);
+		worst_fit_dealloc(ptrs[1]);
+		worst_fit_dealloc(ptrs[2]);
+
+		num = worst_fit_count_extfrag(64);
+	} else if ( algo == 2 ) {
+		// Comparison Test Cases
+
+
+
 	} else {
 		fprintf(stderr, "Should not reach here!\n");
 		exit(1);
 	}
 
-	printf("num = %d\n", num);
+	printf("Expecting num = 2, received num = %d\n", num);
 
 	return 0;
 }
