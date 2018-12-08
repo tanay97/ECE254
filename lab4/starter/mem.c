@@ -65,7 +65,7 @@ int worst_fit_memory_init(size_t size)
 	}
 
 	wfsp_head = (node_t *) malloc(size);
-	printf("Start of memory at: %p, block size is %d bytes\n", wfsp_head, sizeof(node_t));
+	printf("Start of memory at: %p, node size is %d bytes\n", wfsp_head, sizeof(node_t));
 	wfsp_head->alloc_size = size - sizeof(node_t);
 
 	wfsp_head->free = 1;
@@ -92,6 +92,8 @@ void *best_fit_alloc(size_t size)
 	
 		bfsp_head->next->alloc_size = bfsp_head->alloc_size - sizeof(node_t) - size - adjustment; 
 		bfsp_head->next->free = 1;
+		bfsp_head->next->prev = bfsp_head;
+
 		bfsp_head->alloc_size = size + adjustment;
 		bfsp_head->free = 0;
 		
@@ -159,6 +161,8 @@ void *worst_fit_alloc(size_t size)
 
 		wfsp_head->next->alloc_size = wfsp_head->alloc_size - sizeof(node_t) - size - adjustment;
 		wfsp_head->next->free = 1;
+		wfsp_head->next->prev = wfsp_head;
+
 		wfsp_head->alloc_size = size + adjustment;
 		wfsp_head->free = 0;
 		
@@ -176,7 +180,7 @@ void *worst_fit_alloc(size_t size)
 		}	
 
 		if (maxMem > size) {
-			
+			// Memory block larger than requested found
 			void * ptr = (void *)maxNode + size + sizeof(node_t);
 			if ((int)ptr % 4 != 0){
 				//printf("adding %d more to ptr %p \n", 4-(int)ptr%4, ptr);
@@ -187,13 +191,15 @@ void *worst_fit_alloc(size_t size)
 
 			maxNode->next->alloc_size = maxNode->alloc_size - sizeof(node_t) - size - adjustment;
 			maxNode->next->free = 1;
+			maxNode->next->prev = maxNode;
+
 			maxNode->alloc_size = size + adjustment;
 			maxNode->free = 0;
 
 			printf("node at %p with size %d \n", maxNode, maxNode->alloc_size);
 			return (node_t*) ((void*)maxNode + sizeof(node_t));
 		} else if (maxMem == size) {
-
+			// Perfect sized memory block found
 			maxNode->free = 0;
 
 			printf("node at %p with size %d \n", maxNode, maxNode->alloc_size);
@@ -211,21 +217,18 @@ void *worst_fit_alloc(size_t size)
 /* memory de-allocator */
 void best_fit_dealloc(void *ptr) 
 {
-	node_t* del_ptr = (node_t*) ((void*)ptr - sizeof(node_t));
+    node_t* del_ptr = (node_t*) ((void*)ptr - sizeof(node_t));
 
 	// If node after target is free join the memory together
-	if (del_ptr->next->free == 1) {
+	if (del_ptr->next && del_ptr->next->free == 1) {
 		del_ptr->alloc_size = del_ptr->alloc_size + del_ptr->next->alloc_size + sizeof(node_t);
 		del_ptr->next = del_ptr->next->next;
 	}
-		
+	
 	// If node before target is free join the memory together
-	for (node_t* runner = bfsp_head; runner != NULL; runner = runner->next) {
-		if (runner->next == del_ptr && runner->free == 1) {
-			runner->alloc_size = runner->alloc_size + del_ptr->alloc_size + sizeof(node_t);
-			runner->next = del_ptr->next;
-			break;
-		}
+	if (del_ptr->prev && del_ptr->prev->free == 1) {
+		del_ptr->prev->alloc_size = del_ptr->alloc_size + del_ptr->prev->alloc_size + sizeof(node_t);
+		del_ptr->prev->next = del_ptr->next;
 	}
 
 	del_ptr->free = 1;
@@ -236,21 +239,18 @@ void best_fit_dealloc(void *ptr)
 
 void worst_fit_dealloc(void *ptr) 
 {
-        node_t* del_ptr = (node_t*) ((void*)ptr - sizeof(node_t));
+    node_t* del_ptr = (node_t*) ((void*)ptr - sizeof(node_t));
 
 	// If node after target is free join the memory together
-	if (del_ptr->next->free == 1) {
+	if (del_ptr->next && del_ptr->next->free == 1) {
 		del_ptr->alloc_size = del_ptr->alloc_size + del_ptr->next->alloc_size + sizeof(node_t);
 		del_ptr->next = del_ptr->next->next;
 	}
-		
+	
 	// If node before target is free join the memory together
-	for (node_t* runner = wfsp_head; runner != NULL; runner = runner->next) {
-		if (runner->next == del_ptr && runner->free == 1) {
-			runner->alloc_size = runner->alloc_size + del_ptr->alloc_size + sizeof(node_t);
-			runner->next = del_ptr->next;
-			break;
-		}
+	if (del_ptr->prev && del_ptr->prev->free == 1) {
+		del_ptr->prev->alloc_size = del_ptr->alloc_size + del_ptr->prev->alloc_size + sizeof(node_t);
+		del_ptr->prev->next = del_ptr->next;
 	}
 
 	del_ptr->free = 1;
@@ -264,14 +264,13 @@ void worst_fit_dealloc(void *ptr)
 /* count how many free blocks are less than the input size */ 
 int best_fit_count_extfrag(size_t size)
 {
-	// To be completed by students
 	int count = 0;
 	for(node_t* runner = bfsp_head; runner != NULL; runner = runner->next){
 		if (runner->free && runner->alloc_size > size) {
 			count++;
 			//printf("Node %p with size %d is free", runner, runner->alloc_size);
 		}
-	}	
+	}
 	return count;
 }
 
