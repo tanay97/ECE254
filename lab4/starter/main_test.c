@@ -42,7 +42,7 @@ int main(int argc, char *argv[])
 		ptrs[1] = best_fit_alloc(16);		// allocate 16B
 		ptrs[2] = best_fit_alloc(14);		// allocate 24B
 		ptrs[3] = best_fit_alloc(32);		// allocate 32B
-		// ptrs[4] = worst_fit_alloc(0);		// should be NULL
+		// ptrs[4] = best_fit_alloc(0);		// should be NULL
 		ptrs[5] = best_fit_alloc(16);		// allocate 16B
 		ptrs[6] = best_fit_alloc(61);		// allocate 64B
 		// ptrs[7] = best_fit_alloc(1000);   // allocate too much space
@@ -59,15 +59,14 @@ int main(int argc, char *argv[])
 		worst_fit_memory_init(1024);	// initizae 1KB, worst fit
 
 		ptrs[0] = worst_fit_alloc(8);		// allocate 8B
-		ptrs[1] = worst_fit_alloc(16);		// allocate 16B
-		ptrs[2] = worst_fit_alloc(14);		// allocate 24B
+		ptrs[1] = worst_fit_alloc(15);		// allocate 16B
+		ptrs[2] = worst_fit_alloc(22);		// allocate 24B
 		ptrs[3] = worst_fit_alloc(32);		// allocate 32B
-		// ptrs[4] = worst_fit_alloc(0);		// should be NULL
+		ptrs[4] = worst_fit_alloc(0);		// should be NULL
 		ptrs[5] = worst_fit_alloc(16);		// allocate 16B
 		ptrs[6] = worst_fit_alloc(61);		// allocate 64B
-		// ptrs[7] = best_fit_alloc(1000);   // allocate too much space
+		ptrs[7] = best_fit_alloc(1000);   // allocate too much space
 
-		
 		// Should join the middle-block with blocks before and after
 		worst_fit_dealloc(ptrs[3]);
 		worst_fit_dealloc(ptrs[1]);
