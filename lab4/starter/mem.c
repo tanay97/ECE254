@@ -90,7 +90,6 @@ void *best_fit_alloc(size_t size)
 			
 		bfsp_head->next = (node_t *)(ptr);
 	
-		printf("adding %p and %d giving %p in hex \n", bfsp_head, sizeof(node_t) + size, bfsp_head->next);
 		bfsp_head->next->alloc_size = bfsp_head->alloc_size - sizeof(node_t) - size - adjustment; 
 		bfsp_head->next->free = 1;
 		bfsp_head->alloc_size = size + adjustment;
@@ -162,7 +161,8 @@ void *worst_fit_alloc(size_t size)
 		wfsp_head->next->free = 1;
 		wfsp_head->alloc_size = size + adjustment;
 		wfsp_head->free = 0;
-
+		
+		printf("node at %p with size %d \n", wfsp_head, wfsp_head->alloc_size);
 		return (node_t*) ((void*)wfsp_head + sizeof(node_t));
 	} else {
 		int maxMem = 0;
@@ -190,11 +190,13 @@ void *worst_fit_alloc(size_t size)
 			maxNode->alloc_size = size + adjustment;
 			maxNode->free = 0;
 
+			printf("node at %p with size %d \n", maxNode, maxNode->alloc_size);
 			return (node_t*) ((void*)maxNode + sizeof(node_t));
 		} else if (maxMem == size) {
 
 			maxNode->free = 0;
 
+			printf("node at %p with size %d \n", maxNode, maxNode->alloc_size);
 			return (node_t*) ((void*)maxNode + sizeof(node_t));
 		} else {
 			// No Space available
@@ -264,10 +266,10 @@ int best_fit_count_extfrag(size_t size)
 {
 	// To be completed by students
 	int count = 0;
-	for(node_t* runner = wfsp_head; runner != NULL; runner = runner->next){
+	for(node_t* runner = bfsp_head; runner != NULL; runner = runner->next){
 		if (runner->free && runner->alloc_size > size) {
 			count++;
-			printf("Node %p with size %d is free", runner, runner->alloc_size);
+			//printf("Node %p with size %d is free", runner, runner->alloc_size);
 		}
 	}	
 	return count;
@@ -277,10 +279,25 @@ int worst_fit_count_extfrag(size_t size)
 {
 	int count = 0;
 	for (node_t* runner = wfsp_head; runner != NULL; runner = runner->next) {
-		printf("Node location: %p with size %d with free: %d\n", runner, runner->alloc_size, runner->free);		
+		//printf("Node location: %p with size %d with free: %d\n", runner, runner->alloc_size, runner->free);		
 		if (runner->free && runner->alloc_size > size) {
 			count++;
 		}
 	}
 	return count;
+}
+void print_info(int sel){
+	if (sel == 0){
+		printf("printing memory info for best fit \n");
+		for(node_t * runner = bfsp_head; runner != NULL; runner = runner->next){
+			printf("Node : %p - Size : %d - Free : %d \n", runner, runner->alloc_size, runner->free);
+		}
+	}
+	else
+	{
+		printf("printing memory info for worst fit\n");
+		for(node_t * runner = wfsp_head; runner != NULL; runner = runner->next){
+			printf("Node : %p - Size : %d - Free : %d \n", runner, runner->alloc_size, runner->free);
+		}
+	}
 }
