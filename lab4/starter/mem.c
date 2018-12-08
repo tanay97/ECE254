@@ -154,8 +154,8 @@ void *worst_fit_alloc(size_t size)
 		// No memory
 		void * ptr = (void*)wfsp_head + sizeof(node_t) + size;
 		if((int) ptr %4 != 0){
-			ptr += 4 - (int)ptr%4;
 			adjustment = 4 - (int)ptr%4;
+			ptr += 4 - (int)ptr%4;
 		}
 			
 		wfsp_head->next = (node_t *)(ptr);
@@ -183,8 +183,9 @@ void *worst_fit_alloc(size_t size)
 			// Memory block larger than requested found
 			void * ptr = (void *)maxNode + size + sizeof(node_t);
 			if ((int)ptr % 4 != 0){
-				ptr += 4 - (int)ptr%4;
+				//printf("adding %d more to ptr %p \n", 4-(int)ptr%4, ptr);
 				adjustment = 4 - (int)ptr%4;
+				ptr += 4 - (int)ptr%4;
 			}	
 			maxNode->next = (node_t *) (ptr); 
 
