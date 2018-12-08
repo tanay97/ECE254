@@ -80,12 +80,14 @@ void *best_fit_alloc(size_t size)
 	// To be completed by students
 		
 	int adjustment = 0;	
+	if (size == 0){return NULL;}
+
 	if(bfsp_head->next == NULL){ 
 		
 		void * ptr = (void*)bfsp_head + sizeof(node_t) + size;
 		if((int) ptr %4 != 0){
-			adjustment = 4 - (int)ptr%4;
-			ptr += 4 - (int)ptr%4;
+			adjustment = 4 - abs((int)ptr%4);
+			ptr += adjustment;
 		}
 			
 		bfsp_head->next = (node_t *)(ptr);
@@ -118,8 +120,8 @@ void *best_fit_alloc(size_t size)
 				void * ptr = (void *)bf_node + size + sizeof(node_t);
 				if ((int)ptr % 4 != 0){
 					//printf("adding %d more to ptr %p \n", 4-(int)ptr%4, ptr);	
-					adjustment = 4 - (int)ptr%4;
-					ptr += 4 - (int)ptr%4;
+					adjustment = 4 - abs((int)ptr%4);
+					ptr += adjustment;
 				}	
 				bf_node->next = (node_t *) (ptr); 
 
@@ -135,13 +137,11 @@ void *best_fit_alloc(size_t size)
 			}
 			bf_node->free = 0;
 			bf_node->alloc_size = size + adjustment;
-		
 			printf("node at %p with size %d \n", bf_node, bf_node->alloc_size);
 			return (void *)bf_node + sizeof(node_t);	
 		}
 	}
 	
-
 	return NULL;
 }
 
@@ -153,8 +153,8 @@ void *worst_fit_alloc(size_t size)
 		// No memory
 		void * ptr = (void*)wfsp_head + sizeof(node_t) + size;
 		if((int) ptr %4 != 0){
-			adjustment = 4 - (int)ptr%4;
-			ptr += 4 - (int)ptr%4;
+			adjustment = 4 - abs((int)ptr%4);
+			ptr += adjustment;
 		}
 			
 		wfsp_head->next = (node_t *)(ptr);
@@ -184,8 +184,8 @@ void *worst_fit_alloc(size_t size)
 			void * ptr = (void *)maxNode + size + sizeof(node_t);
 			if ((int)ptr % 4 != 0){
 				//printf("adding %d more to ptr %p \n", 4-(int)ptr%4, ptr);
-				adjustment = 4 - (int)ptr%4;
-				ptr += 4 - (int)ptr%4;
+				adjustment = 4 - abs((int)ptr%4);
+				ptr += adjustment;
 			}	
 			maxNode->next = (node_t *) (ptr); 
 
